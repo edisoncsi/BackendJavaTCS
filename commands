@@ -1,0 +1,22 @@
+## CREAR LA CARPETA PARA LA DATA DE LA BDD
+
+mkdir -p shared/mysql_data
+
+## CREA LOS TARGET DE PROYETO INGRESAR A CADA DIRECTORIO
+
+mvn clean install -DskipTests
+
+## CREAR EL BUILD DEL DOCKERFILE
+
+docker build -t client .
+docker build -t mov .
+
+## EJECUTAR EL COMPOSE
+
+sudo docker-compose up -d
+
+##TERMINAR LOS CONTENEDORES
+
+docker-compose down
+
+

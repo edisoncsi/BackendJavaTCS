@@ -1,0 +1,95 @@
+version: "3.9"
+
+services:
+
+  java_app_mov:
+    container_name: java_app_mov
+    image: mov
+    build: .
+    ports:
+      - 5001:5001
+    environment:
+      - DATABASE_URL=jdbc:mysql://host.docker.internal:3306/bankingClient?createDatabaseIfNotExist=true
+      - DATABASE_USERNAME=root
+      - DATABASE_PASSWORD=Edisoncsi84
+    depends_on:
+      - mysql
+      - java_app_client
+    networks:
+      - bankingNet
+
+  java_app_client:
+    container_name: java_app_client
+    image: client
+    build: .
+    ports:
+      - 5000:5000
+    environment:
+      - DATABASE_URL=jdbc:mysql://host.docker.internal:3306/bankingClient?createDatabaseIfNotExist=true
+      - DATABASE_USERNAME=root
+      - DATABASE_PASSWORD=Edisoncsi84
+      - KAFKA_SERVERS=kafka:9092
+    depends_on:
+      - mysql
+    networks:
+      - bankingNet
+
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    ports:
+      - "2181:2181"
+    volumes:
+      - "zookeeper_data:/bitnami"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - bankingNet
+
+  kafka:
+    image: bitnami/kafka:latest
+    ports:
+      - "9092:9092"
+    volumes:
+      - "kafka_data:/bitnami"
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://host.docker.internal:9092
+    depends_on:
+      - zookeeper
+    networks:   # Mover la sección networks dentro de los servicios
+      - bankingNet
+
+  mysql:
+    image: mysql:8.0.34
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'edisoncsi'
+      MYSQL_PASSWORD: 'Edisoncsi84'
+      MYSQL_ROOT_PASSWORD: 'Edisoncsi84'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - type: bind
+        source: ./shared/mysql_data
+        target: /var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - bankingNet
+
+networks:
+  bankingNet:
+    driver: bridge
+
+volumes:
+  zookeeper_data:   # Declaración del volumen zookeeper_data
+    driver: local
+
+  kafka_data:
+    driver: local
+
+  mysql_data:
+    driver: local
