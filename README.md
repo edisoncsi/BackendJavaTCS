@@ -1,8 +1,8 @@
 ## IMPORT THE PROJECT INTO INTELLIJ
 
-  1. Download the project as zip file into your computer
-  2. Unzip the project at your desired location
-  3. Open the project into intellij
+    1. Download the project as zip file into your computer
+    2. Unzip the project at your desired location
+    3. Open the project into intellij
 
 ## CREATE THE FOLDER FOR THE BDD DATA
 
@@ -31,5 +31,5 @@
        
 ## SWAGGER API
 
-  localhost:5000/swagger-ui/index.html 
-  localhost:5001/swagger-ui/index.html 
+    localhost:5000/swagger-ui/index.html 
+    localhost:5001/swagger-ui/index.html 
